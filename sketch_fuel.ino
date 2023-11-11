@@ -3,8 +3,6 @@
 
 #define trigPin 2
 #define echoPin 3
-#define sdaPin 5
-#define selPin 4
 
 LiquidCrystal_I2C lcd(0x27, 16, 2); 
 
@@ -39,13 +37,15 @@ void getDistance() {
 void calculateVolLeft() {
   currentDistance = distance;
 
-  fuelVolume = 26.5 * 9.5 * (9.0 - currentDistance);
-  fuelVolume = round(fuelVolume * 10.0) / 10.0;
+  // ความสูงของถังน้ำมัน 9 cm, หา volume ของน้ำมันที่เหลืออยู่
+  fuelVolume = 26.5 * 9.5 * (9.0 - currentDistance); // กว้าง x ยาว x สูง
+  fuelVolume = round(fuelVolume * 10.0) / 10.0; // ปรับเป็นทศนิยม 1 ตำแหน่ง
 
   float distanceChange = currentDistance - lastDistance;
 
-  timeLeft = (distanceChange > 0) ? (fuelVolume / distanceChange) : timeLeft;
-  timeLeft = round(timeLeft * 10.0) / 10.0;
+  // เชคดูว่ามีการเปลี่ยนแปลงระยะทางหรือไม่ ถ้าไม่มีก็ใช้ค่าเดิม
+  timeLeft = (distanceChange > 0) ? (fuelVolume / distanceChange) : timeLeft; 
+  timeLeft = round(timeLeft * 10.0) / 10.0; // ปรับเป็นทศนิยม 1 ตำแหน่ง
 
   if (fuelVolume < 100) {
     timeLeft = 0;
